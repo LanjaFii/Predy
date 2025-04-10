@@ -1,0 +1,123 @@
+/* Style général de l'application */
+QMainWindow {
+    background-color: #F5F7FA;
+}
+
+QToolBar {
+    background-color: #2C3E50;
+    border: none;
+    padding: 5px;
+    spacing: 10px;
+}
+
+QToolButton {
+    color: white;
+    background-color: transparent;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+QToolButton:hover {
+    background-color: #34495E;
+}
+
+QToolButton:pressed {
+    background-color: #2980B9;
+}
+
+QStatusBar {
+    background-color: #ECF0F1;
+    color: #7F8C8D;
+    border-top: 1px solid #BDC3C7;
+}
+
+QTabWidget::pane {
+    border: 1px solid #BDC3C7;
+    border-radius: 3px;
+    background: white;
+}
+
+QTabBar::tab {
+    background: #ECF0F1;
+    border: 1px solid #BDC3C7;
+    border-bottom: none;
+    padding: 5px 15px;
+    margin-right: 2px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    color: #2C3E50;
+}
+
+QTabBar::tab:selected {
+    background: white;
+    border-bottom: 1px solid white;
+    margin-bottom: -1px;
+    color: #2980B9;
+    font-weight: bold;
+}
+
+QTabBar::tab:hover {
+    background: #D6EAF8;
+}
+
+/* Boutons */
+QPushButton {
+    background-color: #3498DB;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+QPushButton:hover {
+    background-color: #2980B9;
+}
+
+QPushButton:pressed {
+    background-color: #1F618D;
+}
+
+/* Tableaux */
+QTableView {
+    border: 1px solid #BDC3C7;
+    border-radius: 3px;
+    gridline-color: #EAEDED;
+    alternate-background-color: #F8F9F9;
+}
+
+QHeaderView::section {
+    background-color: #3498DB;
+    color: white;
+    padding: 4px;
+    border: 1px solid #2980B9;
+}
+
+/* Onglets */
+QTabWidget::pane {
+    border: 1px solid #BDC3C7;
+    border-radius: 3px;
+    background: white;
+}
+
+QTabBar::tab {
+    background: #ECF0F1;
+    border: 1px solid #BDC3C7;
+    border-bottom: none;
+    padding: 5px 15px;
+    margin-right: 2px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    color: #2C3E50;
+}
+
+QTabBar::tab:selected {
+    background: white;
+    border-bottom: 1px solid white;
+    margin-bottom: -1px;
+    color: #2980B9;
+    font-weight: bold;
+}
+
+QTabBar::tab:hover {
+    background: #D6EAF8;
+}
