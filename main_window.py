@@ -1,11 +1,13 @@
 import os
+import traceback
+
 import pandas as pd
 import numpy as np
 import joblib
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
                              QFileDialog, QStatusBar, QLabel, QPushButton, QMessageBox,
                              QDialog, QFormLayout, QDoubleSpinBox, QDialogButtonBox,
-                             QComboBox, QSpinBox, QProgressBar, QApplication)
+                             QComboBox, QSpinBox, QProgressBar, QApplication, QStyle)
 from PyQt5.QtCore import Qt, QSize, QTimer
 from PyQt5.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -83,6 +85,14 @@ class MainWindow(QMainWindow):
 
     def setup_ui(self):
         """Configure l'interface utilisateur"""
+
+        try:
+            self.setWindowIcon(QIcon(Config.get_icon_path('lanja')))
+        except Exception as e:
+            print(f"Logo non chargé : {str(e)}")
+            # Fallback à une icône par défaut
+            self.setWindowIcon(QIcon.fromTheme('applications-science'))
+
         self.setWindowTitle(f"{Config.APP_NAME} {Config.APP_VERSION}")
         self.setMinimumSize(QSize(1024, 768))
 
@@ -91,17 +101,34 @@ class MainWindow(QMainWindow):
         toolbar.setMovable(False)
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
 
-        # Actions principales
-        self.import_action = toolbar.addAction(QIcon(":/icons/import.png"), "Importer")
-        self.analyze_action = toolbar.addAction(QIcon(":/icons/analyze.png"), "Analyser")
-        self.predict_action = toolbar.addAction(QIcon(":/icons/predict.png"), "Prédire")
-        self.report_action = toolbar.addAction(QIcon(":/icons/report.png"), "Rapport")
+        # Actions principales (MODIFICATION ICI)
+        try:
+            self.import_action = toolbar.addAction(QIcon(Config.get_icon_path('import')), "Importer")
+            self.analyze_action = toolbar.addAction(QIcon(Config.get_icon_path('analyze')), "Analyser")
+            self.predict_action = toolbar.addAction(QIcon(Config.get_icon_path('predict')), "Prédire")
+            self.report_action = toolbar.addAction(QIcon(Config.get_icon_path('report')), "Rapport")
+        except Exception as e:
+            print(f"Erreur chargement icônes: {str(e)}")
+            # Fallback aux icônes système
+            style = self.style()
+            self.import_action = toolbar.addAction(style.standardIcon(QStyle.SP_DialogOpenButton), "Importer")
+            self.analyze_action = toolbar.addAction(style.standardIcon(QStyle.SP_FileDialogContentsView), "Analyser")
+            self.predict_action = toolbar.addAction(style.standardIcon(QStyle.SP_ArrowForward), "Prédire")
+            self.report_action = toolbar.addAction(style.standardIcon(QStyle.SP_FileDialogDetailedView), "Rapport")
 
-        # Barre d'outils secondaire pour les modèles
+        # Barre d'outils secondaire pour les modèles (MODIFICATION ICI)
         model_toolbar = self.addToolBar("Modèles")
         model_toolbar.setMovable(False)
-        self.save_model_action = model_toolbar.addAction(QIcon(":/icons/save.png"), "Sauvegarder modèle")
-        self.load_model_action = model_toolbar.addAction(QIcon(":/icons/load.png"), "Charger modèle")
+        try:
+            self.save_model_action = model_toolbar.addAction(QIcon(Config.get_icon_path('save')), "Sauvegarder modèle")
+            self.load_model_action = model_toolbar.addAction(QIcon(Config.get_icon_path('load')), "Charger modèle")
+        except Exception as e:
+            print(f"Erreur chargement icônes: {str(e)}")
+            style = self.style()
+            self.save_model_action = model_toolbar.addAction(style.standardIcon(QStyle.SP_DialogSaveButton),
+                                                             "Sauvegarder modèle")
+            self.load_model_action = model_toolbar.addAction(style.standardIcon(QStyle.SP_BrowserReload),
+                                                             "Charger modèle")
 
         # Zone centrale
         central_widget = QWidget()
@@ -539,3 +566,72 @@ class MainWindow(QMainWindow):
         """Cache la barre de progression"""
         self.progress_bar.setVisible(False)
         self.progress_bar.setRange(0, 1)  # Réinitialiser
+
+
+
+
+    # Ajoutez ces méthodes à la classe MainWindow
+
+    def setup_icons(self):
+        """Charge les icônes pour les actions"""
+        self.import_action.setIcon(QIcon(Config.get_icon_path('import')))
+        self.analyze_action.setIcon(QIcon(Config.get_icon_path('analyze')))
+        self.predict_action.setIcon(QIcon(Config.get_icon_path('predict')))
+        self.report_action.setIcon(QIcon(Config.get_icon_path('report')))
+
+    def start_operation(self, message):
+        """Démarre une opération longue"""
+        self.status_label.setText(message)
+        self.progress_bar.setRange(0, 0)  # Mode indéterminé
+        self.progress_bar.setVisible(True)
+        QApplication.processEvents()
+
+    def end_operation(self):
+        """Termine une opération"""
+        self.progress_bar.setVisible(False)
+        self.progress_bar.setRange(0, 1)
+
+    def validate_data(self):
+        """Valide les données avant analyse"""
+        if self.data is None:
+            return "Aucune donnée chargée"
+
+        errors = []
+        if self.data.empty:
+            errors.append("Le fichier est vide")
+
+        numeric_cols = self.data.select_dtypes(include=[np.number]).columns
+        if len(numeric_cols) < 2:
+            errors.append("Moins de 2 colonnes numériques détectées")
+
+        for col in numeric_cols:
+            if self.data[col].isnull().all():
+                errors.append(f"Colonne '{col}' ne contient que des valeurs manquantes")
+
+        return "\n".join(errors) if errors else None
+
+    # Modifiez analyze_data() comme ceci :
+    def analyze_data(self):
+        """Analyse les données avec ACP et statistiques"""
+        validation_error = self.validate_data()
+        if validation_error:
+            QMessageBox.warning(self, "Données invalides",
+                                f"Impossible d'analyser :\n\n{validation_error}")
+            return
+
+        try:
+            self.start_operation("Analyse en cours...")
+            QTimer.singleShot(100, self.finish_analysis)
+        except Exception as e:
+            self.end_operation()
+            self.show_error("Erreur d'analyse", str(e))
+
+    def show_error(self, title, message):
+        """Affiche un message d'erreur détaillé"""
+        error_dialog = QMessageBox(self)
+        error_dialog.setIcon(QMessageBox.Critical)
+        error_dialog.setWindowTitle(title)
+        error_dialog.setText("Une erreur est survenue")
+        error_dialog.setInformativeText(message)
+        error_dialog.setDetailedText(f"Traceback :\n{traceback.format_exc()}")
+        error_dialog.exec_()

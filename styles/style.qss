@@ -121,3 +121,86 @@ QTabBar::tab:selected {
 QTabBar::tab:hover {
     background: #D6EAF8;
 }
+
+
+/* Style général */
+QMainWindow {
+    background-color: #F5F7FA;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Barre d'outils */
+QToolBar {
+    background-color: #2C3E50;
+    padding: 5px;
+    border: none;
+}
+
+QToolButton {
+    padding: 8px;
+    margin: 2px;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+}
+
+QToolButton:hover {
+    background-color: #34495E;
+}
+
+QToolButton:pressed {
+    background-color: #2980B9;
+}
+
+/* Barre de progression */
+QProgressBar {
+    border: 1px solid #3498DB;
+    border-radius: 3px;
+    text-align: center;
+    height: 15px;
+}
+
+QProgressBar::chunk {
+    background-color: #3498DB;
+    width: 10px;
+    margin: 0.5px;
+}
+
+/* Messages d'erreur */
+QMessageBox {
+    background-color: #F5F7FA;
+}
+
+QMessageBox QLabel {
+    color: #2C3E50;
+    font-size: 13px;
+}
+
+QMessageBox QPushButton {
+    min-width: 80px;
+    padding: 5px;
+}
+
+/* Style des boutons de la toolbar */
+QToolButton {
+    padding: 8px;
+    margin: 2px;
+    border-radius: 4px;
+    background-color: #2C3E50;
+    color: white;
+}
+
+QToolButton:hover {
+    background-color: #3498DB;
+}
+
+QToolButton:pressed {
+    background-color: #2980B9;
+}
+
+/* Taille des icônes */
+QToolButton > QIcon {
+    width: 24px;
+    height: 24px;
+}
+
